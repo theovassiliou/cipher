@@ -1,6 +1,7 @@
 package cyphering
 
 import (
+	"fmt"
 	"testing"
 )
 
@@ -281,4 +282,34 @@ func TestNewAlphabet_UT8(t *testing.T) {
 			}
 		})
 	}
+}
+
+func ExampleCypher() {
+	cleartext := "HELLO WORLD"
+	encryptedText := Cypher(StdUppercaseAlphabet, RotateUTF8(3, StdUppercaseAlphabet), cleartext)
+
+	fmt.Println(StdUppercaseAlphabet)
+	fmt.Println(RotateUTF8(3, StdUppercaseAlphabet))
+	fmt.Println(cleartext)
+	fmt.Println(encryptedText)
+	// Output:
+	// ABCDEFGHIJKLMNOPQRSTUVWXYZ
+	// DEFGHIJKLMNOPQRSTUVWXYZABC
+	// HELLO WORLD
+	// KHOOR ZRUOG
+}
+
+func ExampleDecypher() {
+	encryptedtext := "KHOOR ZRUOG"
+	cleartext := Decypher(StdUppercaseAlphabet, RotateUTF8(3, StdUppercaseAlphabet), encryptedtext)
+
+	fmt.Println(StdUppercaseAlphabet)
+	fmt.Println(RotateUTF8(3, StdUppercaseAlphabet))
+	fmt.Println(encryptedtext)
+	fmt.Println(cleartext)
+	// Output:
+	// ABCDEFGHIJKLMNOPQRSTUVWXYZ
+	// DEFGHIJKLMNOPQRSTUVWXYZABC
+	// KHOOR ZRUOG
+	// HELLO WORLD
 }

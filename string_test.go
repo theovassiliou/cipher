@@ -147,14 +147,6 @@ func TestRotateUTF8Plain(t *testing.T) {
 		want string
 	}{
 		{
-			name: "No shift",
-			args: args{
-				delta:         0,
-				inputAlphabet: "ABCD",
-			},
-			want: "ABCD",
-		},
-		{
 			name: "ROT-1",
 			args: args{
 				delta:         1,
@@ -169,6 +161,14 @@ func TestRotateUTF8Plain(t *testing.T) {
 				inputAlphabet: "ABCD",
 			},
 			want: "CDAB",
+		},
+		{
+			name: "No shift",
+			args: args{
+				delta:         0,
+				inputAlphabet: "ABCD",
+			},
+			want: "ABCD",
 		},
 
 		{
@@ -192,67 +192,6 @@ func TestRotateUTF8Plain(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := RotateUTF8(tt.args.delta, tt.args.inputAlphabet); got != tt.want {
 				t.Errorf("RotateUTF8() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-func Test_countRunes(t *testing.T) {
-	type args struct {
-		in string
-	}
-	tests := []struct {
-		name string
-		args args
-		want int
-	}{
-		{
-			name: "Simple",
-			args: args{
-				in: "abcde",
-			},
-			want: 5,
-		},
-		{
-			name: "Single",
-			args: args{
-				in: "a",
-			},
-			want: 1,
-		},
-		{
-			name: "Empty",
-			args: args{
-				in: "",
-			},
-			want: 0,
-		},
-		{
-			name: "Single UTF-8",
-			args: args{
-				in: "α",
-			},
-			want: 1,
-		},
-		{
-			name: "Multi UTF-8",
-			args: args{
-				in: "αβψδ",
-			},
-			want: 4,
-		},
-
-		{
-			name: "Mixed",
-			args: args{
-				in: "aβcδeφ",
-			},
-			want: 6,
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := countRunes(tt.args.in); got != tt.want {
-				t.Errorf("countRunes() = %v, want %v", got, tt.want)
 			}
 		})
 	}

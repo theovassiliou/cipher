@@ -5,9 +5,9 @@ const StdUppercaseAlphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 const StdAlphabet = StdLowercaseAlphabet + StdUppercaseAlphabet
 
 func Decypher(inputAlphabet, secretAlphabet, cyphertext string) (input string) {
-	iaRunes := str2Runes(inputAlphabet)
-	saRunes := str2Runes(secretAlphabet)
-	cyphertextRunes := str2Runes(cyphertext)
+	iaRunes := []rune(inputAlphabet)
+	saRunes := []rune(secretAlphabet)
+	cyphertextRunes := []rune(cyphertext)
 
 	inputRunes := make([]rune, len(cyphertextRunes))
 
@@ -32,9 +32,9 @@ func Decypher(inputAlphabet, secretAlphabet, cyphertext string) (input string) {
 }
 
 func Cypher(inputAlphabet, secretAlphabet, input string) (cyphertext string) {
-	iaRunes := str2Runes(inputAlphabet)
-	saRunes := str2Runes(secretAlphabet)
-	inputRunes := str2Runes(input)
+	iaRunes := []rune(inputAlphabet)
+	saRunes := []rune(secretAlphabet)
+	inputRunes := []rune(input)
 	cyphertextRunes := make([]rune, len(inputRunes))
 
 	if len(iaRunes) == 0 || len(saRunes) == 0 {

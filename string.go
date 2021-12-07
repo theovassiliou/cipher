@@ -3,13 +3,8 @@ package cyphering
 // ReverseUTF8 reverses a given UTF-8 string
 // "abcde" --> "edcba"
 func ReverseUTF8(input string) string {
-	n := 0
-	runes := make([]rune, len(input))
-	for _, r := range input {
-		runes[n] = r
-		n++
-	}
-	runes = runes[0:n]
+	runes := []rune(input)
+	n := len(runes)
 	// Reverse
 	for i := 0; i < n/2; i++ {
 		runes[i], runes[n-1-i] = runes[n-1-i], runes[i]
@@ -25,23 +20,19 @@ func RotateUTF8(delta int, input string) string {
 	if delta == 0 {
 		return input
 	} else if delta > 0 {
-		tail := []rune{}
-		output := []rune{}
-		runeCount := 0
+		in := []rune(input)
+		lin := len(in)
+		output := make([]rune, lin)
 
-		for _, runeValue := range input {
-			if runeCount < delta {
-				tail = append(tail, runeValue)
-			} else {
-				output = append(output, runeValue)
-			}
-			runeCount++
+		for i := delta; i < lin; i++ {
+			output[i-delta] = in[i]
 		}
-		output = append(output, tail...)
-
+		for i := 0; i < delta; i++ {
+			output[lin-delta+i] = in[i]
+		}
 		return string(output)
 	} else {
-		runeCount := countRunes(input)
+		runeCount := len([]rune(input))
 		return RotateUTF8(runeCount+delta, input)
 	}
 }
@@ -64,22 +55,4 @@ func contains(s []rune, e rune) bool {
 		}
 	}
 	return false
-}
-
-func str2Runes(std string) []rune {
-	n := 0
-	runes := make([]rune, len(std))
-	for _, r := range std {
-		runes[n] = r
-		n++
-	}
-	return runes[0:n]
-}
-
-func countRunes(in string) int {
-	runes := 0
-	for range in {
-		runes++
-	}
-	return runes
 }
