@@ -4,51 +4,6 @@ const StdLowercaseAlphabet = "abcdefghijklmnopqrstuvwxyz"
 const StdUppercaseAlphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 const StdAlphabet = StdLowercaseAlphabet + StdUppercaseAlphabet
 
-// ReverseUTF8 reverses a given UTF-8 string
-func ReverseUTF8(input string) string {
-	n := 0
-	runes := make([]rune, len(input))
-	for _, r := range input {
-		runes[n] = r
-		n++
-	}
-	runes = runes[0:n]
-	// Reverse
-	for i := 0; i < n/2; i++ {
-		runes[i], runes[n-1-i] = runes[n-1-i], runes[i]
-	}
-	// Convert back to UTF-8.
-	return string(runes)
-}
-
-// ShiftUTF8 returns a left (delta >0) or right shifted (delta <0) string
-// delta 2:  "abcde" --> "cdeab"
-// delta -2: "abcde" --> "deabc"
-func ShiftUTF8(delta int, inputAlphabet string) string {
-	if delta == 0 {
-		return inputAlphabet
-	} else if delta > 0 {
-		tail := []rune{}
-		outputAlphabet := []rune{}
-		runeNo := 0
-
-		for _, runeValue := range inputAlphabet {
-			if runeNo < delta {
-				tail = append(tail, runeValue)
-			} else {
-				outputAlphabet = append(outputAlphabet, runeValue)
-			}
-			runeNo++
-		}
-		outputAlphabet = append(outputAlphabet, tail...)
-
-		return string(outputAlphabet)
-	} else {
-		runeCount := countRunes(inputAlphabet)
-		return ShiftUTF8(runeCount+delta, inputAlphabet)
-	}
-}
-
 func Decypher(inputAlphabet, secretAlphabet, cyphertext string) (input string) {
 	iaRunes := str2Runes(inputAlphabet)
 	saRunes := str2Runes(secretAlphabet)
