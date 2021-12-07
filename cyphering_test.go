@@ -4,7 +4,7 @@ import (
 	"testing"
 )
 
-func TestCypher(t *testing.T) {
+func TestCypherDecypher(t *testing.T) {
 	type args struct {
 		inputAlphabet  string
 		secretAlphabet string
@@ -80,24 +80,6 @@ func TestCypher(t *testing.T) {
 			wantCyphertext: "z",
 		},
 		{
-			name: "SimpleReverse Empty inputAlphabet",
-			args: args{
-				inputAlphabet:  "",
-				secretAlphabet: "zyxw",
-				input:          "a",
-			},
-			wantCyphertext: "",
-		},
-		{
-			name: "SimpleReverse Empty secretAlphabet",
-			args: args{
-				inputAlphabet:  "abcd",
-				secretAlphabet: "",
-				input:          "a",
-			},
-			wantCyphertext: "",
-		},
-		{
 			name: "SimpleReverse Empty secretAlphabet",
 			args: args{
 				inputAlphabet:  "abcd",
@@ -136,89 +118,166 @@ func TestCypher(t *testing.T) {
 			},
 			wantCyphertext: "kdoor78wkhr90",
 		},
+		{
+			name: "Simple NewAlphabet",
+			args: args{
+				inputAlphabet:  StdLowercaseAlphabet,
+				secretAlphabet: NewAlphabet("weiskopfseeadler", StdLowercaseAlphabet),
+				input:          "wirtreffenunsum9uhr",
+			},
+			wantCyphertext: "vamqmkookctcntb9tfm",
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if gotCyphertext := Cypher(tt.args.inputAlphabet, tt.args.secretAlphabet, tt.args.input); gotCyphertext != tt.wantCyphertext {
+
+			gotCyphertext := Cypher(tt.args.inputAlphabet, tt.args.secretAlphabet, tt.args.input)
+			gotDecyphertext := Decypher(tt.args.inputAlphabet, tt.args.secretAlphabet, tt.wantCyphertext)
+			if gotCyphertext != tt.wantCyphertext {
+				t.Errorf("Cypher() = %v, want %v", gotCyphertext, tt.wantCyphertext)
+			}
+			if gotDecyphertext != tt.args.input {
+				t.Errorf("Decypher() = %v, want %v", gotDecyphertext, tt.args.input)
+				t.Errorf("Cypher() = %v, want %v", gotCyphertext, tt.wantCyphertext)
+
+			}
+
+		})
+	}
+}
+
+func TestCypher_NonReversible(t *testing.T) {
+	type args struct {
+		inputAlphabet  string
+		secretAlphabet string
+		input          string
+	}
+	tests := []struct {
+		name           string
+		args           args
+		wantCyphertext string
+	}{
+		{
+			name: "SimpleReverse Empty inputAlphabet",
+			args: args{
+				inputAlphabet:  "",
+				secretAlphabet: "zyxw",
+				input:          "a",
+			},
+			wantCyphertext: "",
+		},
+		{
+			name: "SimpleReverse Empty secretAlphabet",
+			args: args{
+				inputAlphabet:  "abcd",
+				secretAlphabet: "",
+				input:          "a",
+			},
+			wantCyphertext: "",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+
+			gotCyphertext := Cypher(tt.args.inputAlphabet, tt.args.secretAlphabet, tt.args.input)
+			if gotCyphertext != tt.wantCyphertext {
 				t.Errorf("Cypher() = %v, want %v", gotCyphertext, tt.wantCyphertext)
 			}
 		})
 	}
 }
 
-func TestDecypher(t *testing.T) {
+func TestNewAlphabet_Plain(t *testing.T) {
 	type args struct {
-		inputAlphabet  string
-		secretAlphabet string
-		cyphertext     string
+		keyword      string
+		baseAlphabet string
 	}
 	tests := []struct {
-		name      string
-		args      args
-		wantInput string
+		name string
+		args args
+		want string
 	}{
 		{
-			name: "SimpleReverse",
+			name: "empty",
 			args: args{
-				inputAlphabet:  StdLowercaseAlphabet,
-				secretAlphabet: ReverseUTF8(StdLowercaseAlphabet),
-				cyphertext:     "zyxwv",
+				keyword:      "",
+				baseAlphabet: "",
 			},
-			wantInput: "abcde",
+			want: "",
 		},
 		{
-			name: "SimpleReverse Unicodes",
+			name: "empty keyword",
 			args: args{
-				inputAlphabet:  "άσδφγηξκλέ",
-				secretAlphabet: "έλκξηγφδσά",
-				cyphertext:     "έλκ",
+				keyword:      "",
+				baseAlphabet: StdUppercaseAlphabet,
 			},
-			wantInput: "άσδ",
+			want: StdUppercaseAlphabet,
 		},
 		{
-			name: "SimpleReverse Mixed",
+			name: "empty base",
 			args: args{
-				inputAlphabet:  "άσδφγηξκλέabcd",
-				secretAlphabet: "dcbaέλκξηγφδσά",
-				cyphertext:     "dσά",
+				keyword:      StdUppercaseAlphabet,
+				baseAlphabet: "",
 			},
-			wantInput: "άcd",
-		},
-		// const fullAlpha = "abcdefghijklmnopqrstuvwxyz"
-		// const shift3    = "defghijklmnopqrstuvwxyzabc"
-
-		{
-			name: "SimpleReverse shiftencoding",
-			args: args{
-				inputAlphabet:  StdLowercaseAlphabet,
-				secretAlphabet: RotateUTF8(3, StdLowercaseAlphabet),
-				cyphertext:     "kdoorwkhr",
-			},
-			wantInput: "hallotheo",
+			want: StdUppercaseAlphabet,
 		},
 		{
-			name: "SimpleReverse shiftencoding with unknwown space",
+			name: "KEYWORD and Alphabet",
 			args: args{
-				inputAlphabet:  StdLowercaseAlphabet,
-				secretAlphabet: RotateUTF8(3, StdLowercaseAlphabet),
-				cyphertext:     "kdoor wkhr",
+				keyword:      "ASECRETKEYWORD",
+				baseAlphabet: StdUppercaseAlphabet,
 			},
-			wantInput: "hallo theo",
+			want: "ASECRTKYWODBFGHIJLMNPQUVXZ",
 		},
 		{
-			name: "SimpleReverse shiftencoding with unknwown numbers",
+			name: "KEYWORD with spaced and Alphabet",
 			args: args{
-				inputAlphabet:  StdLowercaseAlphabet,
-				secretAlphabet: RotateUTF8(3, StdLowercaseAlphabet),
-				cyphertext:     "kdoor78wkhr90",
+				keyword:      "A SECRET KEYWORD",
+				baseAlphabet: StdUppercaseAlphabet,
 			},
-			wantInput: "hallo78theo90",
+			want: "A SECRTKYWODBFGHIJLMNPQUVXZ",
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if gotInput := Decypher(tt.args.inputAlphabet, tt.args.secretAlphabet, tt.args.cyphertext); gotInput != tt.wantInput {
-				t.Errorf("Decypher() = %v, want %v", gotInput, tt.wantInput)
+			if got := NewAlphabet(tt.args.keyword, tt.args.baseAlphabet); got != tt.want {
+				t.Errorf("NewAlphabet() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestNewAlphabet_UT8(t *testing.T) {
+	type args struct {
+		keyword      string
+		baseAlphabet string
+	}
+	tests := []struct {
+		name string
+		args args
+		want string
+	}{
+		{
+			name: "KEYWORD and Alphabet",
+			args: args{
+				keyword:      "πανμετροναριστον",
+				baseAlphabet: StdLowercaseAlphabet,
+			},
+			want: "πανμετροισabcdefghijklmnopqrstuvwxyz",
+		},
+		{
+			name: "KEYWORD and Alphabet",
+			args: args{
+				keyword:      "πανmetronαριστον",
+				baseAlphabet: StdLowercaseAlphabet,
+			},
+			want: "πανmetronριστοabcdfghijklpqsuvwxyz",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := NewAlphabet(tt.args.keyword, tt.args.baseAlphabet); got != tt.want {
+				t.Errorf("NewAlphabet() = %v, want %v", got, tt.want)
 			}
 		})
 	}

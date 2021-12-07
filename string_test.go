@@ -257,3 +257,104 @@ func Test_countRunes(t *testing.T) {
 		})
 	}
 }
+
+func TestStripDuplicates_Plain(t *testing.T) {
+	type args struct {
+		input string
+	}
+	tests := []struct {
+		name string
+		args args
+		want string
+	}{
+		{
+			name: "Empty",
+			args: args{
+				input: "",
+			},
+			want: "",
+		},
+		{
+			name: "All disjunct",
+			args: args{
+				input: "cafe",
+			},
+			want: "cafe",
+		},
+		{
+			name: "One duplicate letter",
+			args: args{
+				input: "caffe",
+			},
+			want: "cafe",
+		},
+		{
+			name: "Multiple duplicate letters",
+			args: args{
+				input: "caffee",
+			},
+			want: "cafe",
+		},
+		{
+			name: "A somewhat longer text ",
+			args: args{
+				input: "Asomewhatlongertext",
+			},
+			want: "Asomewhatlngrx",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := StripDuplicates(tt.args.input); got != tt.want {
+				t.Errorf("StripDuplicates() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestStripDuplicates_UTF8(t *testing.T) {
+	type args struct {
+		input string
+	}
+	tests := []struct {
+		name string
+		args args
+		want string
+	}{
+		{
+			name: "All disjunct",
+			args: args{
+				input: "αβψδ",
+			},
+			want: "αβψδ",
+		},
+		{
+			name: "One duplicate letter",
+			args: args{
+				input: "αβψδα",
+			},
+			want: "αβψδ",
+		},
+		{
+			name: "Multiple duplicate letters",
+			args: args{
+				input: "αββψδδα",
+			},
+			want: "αβψδ",
+		},
+		{
+			name: "Μιχεδ",
+			args: args{
+				input: "Πανmetronαριστον",
+			},
+			want: "Πανmetronριστο",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := StripDuplicates(tt.args.input); got != tt.want {
+				t.Errorf("StripDuplicates() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

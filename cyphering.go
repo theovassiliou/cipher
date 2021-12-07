@@ -60,20 +60,24 @@ func Cypher(inputAlphabet, secretAlphabet, input string) (cyphertext string) {
 	return string(cyphertextRunes)
 }
 
-func str2Runes(std string) []rune {
-	n := 0
-	runes := make([]rune, len(std))
-	for _, r := range std {
-		runes[n] = r
-		n++
-	}
-	return runes[0:n]
-}
+// NewAlphabet create a new alphabet based on a given keyword, white spaces and
+// any other special character are not treated special
+// Example:
+// Input: ASECRETKEYWORD, StdUppercaseAlphabet
+// ASECRTKYWODBFGHIJLMNPQRUVXYZ
+func NewAlphabet(keyword, baseAlphabet string) string {
+	var output []rune
+	cleanKeyword := StripDuplicates(keyword)
 
-func countRunes(in string) int {
-	runes := 0
-	for range in {
-		runes++
+	for _, c := range cleanKeyword {
+		output = append(output, c)
 	}
-	return runes
+
+	for _, c := range baseAlphabet {
+		if !contains(output, c) {
+			output = append(output, c)
+		}
+	}
+
+	return string(output)
 }
