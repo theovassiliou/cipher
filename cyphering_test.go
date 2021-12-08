@@ -284,7 +284,7 @@ func TestNewAlphabet_UT8(t *testing.T) {
 	}
 }
 
-func ExampleCypher() {
+func ExampleCypher_helloWorld() {
 	cleartext := "HELLO WORLD"
 	encryptedText := Cypher(StdUppercaseAlphabet, RotateUTF8(3, StdUppercaseAlphabet), cleartext)
 
@@ -299,7 +299,7 @@ func ExampleCypher() {
 	// KHOOR ZRUOG
 }
 
-func ExampleDecypher() {
+func ExampleDecypher_helloWorld() {
 	encryptedtext := "KHOOR ZRUOG"
 	cleartext := Decypher(StdUppercaseAlphabet, RotateUTF8(3, StdUppercaseAlphabet), encryptedtext)
 
@@ -312,4 +312,33 @@ func ExampleDecypher() {
 	// DEFGHIJKLMNOPQRSTUVWXYZABC
 	// KHOOR ZRUOG
 	// HELLO WORLD
+}
+
+func ExampleCypher_dreiFragezeichen() {
+	cleartext := "NYT SEITE8 HEUTE 6PM BPPUTHAUS"
+	encryptedText := Cypher(StdUppercaseAlphabet, NewAlphabet("WEISKOPFSEEADLER", StdUppercaseAlphabet), cleartext)
+
+	fmt.Println(StdUppercaseAlphabet)
+	fmt.Println(NewAlphabet("WEISKOPFSEEADLER", StdUppercaseAlphabet))
+	fmt.Println(cleartext)
+	fmt.Println(encryptedText)
+	// Output:
+	// ABCDEFGHIJKLMNOPQRSTUVWXYZ
+	// WEISKOPFADLRBCGHJMNQTUVXYZ
+	// NYT SEITE8 HEUTE 6PM BPPUTHAUS
+	// CYQ NKAQK8 FKTQK 6HB EHHTQFWTN
+}
+func ExampleDecypher_dreiFragezeichen() {
+	encryptedtext := "CYQ NKAQK8 FKTQK 6HB EHHTQFWTN"
+	cleartext := Decypher(StdUppercaseAlphabet, NewAlphabet("WEISKOPFSEEADLER", StdUppercaseAlphabet), encryptedtext)
+
+	fmt.Println(StdUppercaseAlphabet)
+	fmt.Println(NewAlphabet("WEISKOPFSEEADLER", StdUppercaseAlphabet))
+	fmt.Println(encryptedtext)
+	fmt.Println(cleartext)
+	// Output:
+	// ABCDEFGHIJKLMNOPQRSTUVWXYZ
+	// WEISKOPFADLRBCGHJMNQTUVXYZ
+	// CYQ NKAQK8 FKTQK 6HB EHHTQFWTN
+	// NYT SEITE8 HEUTE 6PM BPPUTHAUS
 }
