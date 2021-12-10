@@ -123,7 +123,7 @@ func TestCypherDecypher(t *testing.T) {
 			name: "Simple NewAlphabet",
 			args: args{
 				inputAlphabet:  StdLowercaseAlphabet,
-				secretAlphabet: NewAlphabet("weiskopfseeadler", StdLowercaseAlphabet),
+				secretAlphabet: NewKeywordAlphabet("weiskopfseeadler", StdLowercaseAlphabet),
 				input:          "wirtreffenunsum9uhr",
 			},
 			wantCyphertext: "vamqmkookctcntb9tfm",
@@ -132,8 +132,8 @@ func TestCypherDecypher(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 
-			gotCyphertext := Cypher(tt.args.inputAlphabet, tt.args.secretAlphabet, tt.args.input)
-			gotDecyphertext := Decypher(tt.args.inputAlphabet, tt.args.secretAlphabet, tt.wantCyphertext)
+			gotCyphertext := stdCipher(tt.args.inputAlphabet, tt.args.secretAlphabet, tt.args.input)
+			gotDecyphertext := stdDecipher(tt.args.inputAlphabet, tt.args.secretAlphabet, tt.wantCyphertext)
 			if gotCyphertext != tt.wantCyphertext {
 				t.Errorf("Cypher() = %v, want %v", gotCyphertext, tt.wantCyphertext)
 			}
@@ -180,7 +180,7 @@ func TestCypher_NonReversible(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 
-			gotCyphertext := Cypher(tt.args.inputAlphabet, tt.args.secretAlphabet, tt.args.input)
+			gotCyphertext := stdCipher(tt.args.inputAlphabet, tt.args.secretAlphabet, tt.args.input)
 			if gotCyphertext != tt.wantCyphertext {
 				t.Errorf("Cypher() = %v, want %v", gotCyphertext, tt.wantCyphertext)
 			}
@@ -241,7 +241,7 @@ func TestNewAlphabet_Plain(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := NewAlphabet(tt.args.keyword, tt.args.baseAlphabet); got != tt.want {
+			if got := NewKeywordAlphabet(tt.args.keyword, tt.args.baseAlphabet); got != tt.want {
 				t.Errorf("NewAlphabet() = %v, want %v", got, tt.want)
 			}
 		})
@@ -277,16 +277,16 @@ func TestNewAlphabet_UT8(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := NewAlphabet(tt.args.keyword, tt.args.baseAlphabet); got != tt.want {
+			if got := NewKeywordAlphabet(tt.args.keyword, tt.args.baseAlphabet); got != tt.want {
 				t.Errorf("NewAlphabet() = %v, want %v", got, tt.want)
 			}
 		})
 	}
 }
 
-func ExampleCypher_helloWorld() {
+func ExamplestdCipher_helloWorld() {
 	cleartext := "HELLO WORLD"
-	encryptedText := Cypher(StdUppercaseAlphabet, RotateUTF8(3, StdUppercaseAlphabet), cleartext)
+	encryptedText := stdCipher(StdUppercaseAlphabet, RotateUTF8(3, StdUppercaseAlphabet), cleartext)
 
 	fmt.Println(StdUppercaseAlphabet)
 	fmt.Println(RotateUTF8(3, StdUppercaseAlphabet))
@@ -299,9 +299,9 @@ func ExampleCypher_helloWorld() {
 	// KHOOR ZRUOG
 }
 
-func ExampleDecypher_helloWorld() {
+func ExamplestdDecipher_helloWorld() {
 	encryptedtext := "KHOOR ZRUOG"
-	cleartext := Decypher(StdUppercaseAlphabet, RotateUTF8(3, StdUppercaseAlphabet), encryptedtext)
+	cleartext := stdDecipher(StdUppercaseAlphabet, RotateUTF8(3, StdUppercaseAlphabet), encryptedtext)
 
 	fmt.Println(StdUppercaseAlphabet)
 	fmt.Println(RotateUTF8(3, StdUppercaseAlphabet))
@@ -314,12 +314,12 @@ func ExampleDecypher_helloWorld() {
 	// HELLO WORLD
 }
 
-func ExampleCypher_dreiFragezeichen() {
+func ExamplestdCipher_dreiFragezeichen() {
 	cleartext := "NYT SEITE8 HEUTE 6PM BPPUTHAUS"
-	encryptedText := Cypher(StdUppercaseAlphabet, NewAlphabet("WEISKOPFSEEADLER", StdUppercaseAlphabet), cleartext)
+	encryptedText := stdCipher(StdUppercaseAlphabet, NewKeywordAlphabet("WEISKOPFSEEADLER", StdUppercaseAlphabet), cleartext)
 
 	fmt.Println(StdUppercaseAlphabet)
-	fmt.Println(NewAlphabet("WEISKOPFSEEADLER", StdUppercaseAlphabet))
+	fmt.Println(NewKeywordAlphabet("WEISKOPFSEEADLER", StdUppercaseAlphabet))
 	fmt.Println(cleartext)
 	fmt.Println(encryptedText)
 	// Output:
@@ -328,12 +328,12 @@ func ExampleCypher_dreiFragezeichen() {
 	// NYT SEITE8 HEUTE 6PM BPPUTHAUS
 	// CYQ NKAQK8 FKTQK 6HB EHHTQFWTN
 }
-func ExampleDecypher_dreiFragezeichen() {
+func ExamplestdDecipher_dreiFragezeichen() {
 	encryptedtext := "CYQ NKAQK8 FKTQK 6HB EHHTQFWTN"
-	cleartext := Decypher(StdUppercaseAlphabet, NewAlphabet("WEISKOPFSEEADLER", StdUppercaseAlphabet), encryptedtext)
+	cleartext := stdDecipher(StdUppercaseAlphabet, NewKeywordAlphabet("WEISKOPFSEEADLER", StdUppercaseAlphabet), encryptedtext)
 
 	fmt.Println(StdUppercaseAlphabet)
-	fmt.Println(NewAlphabet("WEISKOPFSEEADLER", StdUppercaseAlphabet))
+	fmt.Println(NewKeywordAlphabet("WEISKOPFSEEADLER", StdUppercaseAlphabet))
 	fmt.Println(encryptedtext)
 	fmt.Println(cleartext)
 	// Output:
