@@ -1,4 +1,4 @@
-package cyphering
+package cipher
 
 const StdLowercaseAlphabet = "abcdefghijklmnopqrstuvwxyz"
 const StdUppercaseAlphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"

@@ -1,4 +1,50 @@
-package cyphering
+package cipher
+
+type StdCipher struct {
+	name          string
+	plainAlphabet string
+	keyAlphabet   string
+}
+
+func NewStdCipher(plainAlphabet, keyAlphabet string) CiphererDecipherer {
+	return StdCipher{
+		name:          "StandardCipherer",
+		plainAlphabet: plainAlphabet,
+		keyAlphabet:   keyAlphabet,
+	}
+}
+
+func NewCaesarCipher(plainAlphabet string) CiphererDecipherer {
+	return StdCipher{
+		name:          "StandardCipherer",
+		plainAlphabet: plainAlphabet,
+		keyAlphabet:   RotateUTF8(3, plainAlphabet),
+	}
+}
+
+func (c StdCipher) Cipher(plaintext string) string {
+	return stdCipher(c.plainAlphabet, c.keyAlphabet, plaintext)
+}
+
+func (c StdCipher) Decipher(cipherText string) string {
+	return stdDecipher(c.plainAlphabet, c.keyAlphabet, cipherText)
+}
+
+func (c StdCipher) Name() string {
+	return c.name
+}
+
+func (c StdCipher) Description() string {
+	return `Keyword Cipher encodes a plaintext based on a given keyword.
+The key alphabet will be constructed as follows.
+First, the keyword will be stripped to contain only unique characters.
+Second, the alphabet will be appended with no characters from the keyword.
+
+	// Example:
+	// Input: ASECRETKEYWORD, StdUppercaseAlphabet
+	// ASECRTKYWODBFGHIJLMNPQRUVXYZ
+`
+}
 
 func stdDecipher(plainAlphabet, keyAlphabet, ciphertext string) (input string) {
 	paRunes := []rune(plainAlphabet)

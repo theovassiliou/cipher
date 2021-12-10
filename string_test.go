@@ -1,4 +1,4 @@
-package cyphering
+package cipher
 
 import (
 	"testing"

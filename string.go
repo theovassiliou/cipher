@@ -1,4 +1,4 @@
-package cyphering
+package cipher
 
 // ReverseUTF8 reverses a given UTF-8 string
 // "abcde" --> "edcba"

@@ -1,4 +1,4 @@
-package cyphering
+package cipher
 
 type KeywordCipher struct {
 	name          string
@@ -25,7 +25,7 @@ func (c KeywordCipher) Decipher(cipherText string) string {
 }
 
 func (c KeywordCipher) Name() string {
-	return "Keyword Cipher"
+	return c.name
 }
 
 func (c KeywordCipher) Description() string {
