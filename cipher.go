@@ -16,7 +16,7 @@ func NewStdCipher(plainAlphabet, keyAlphabet string) CiphererDecipherer {
 
 func NewCaesarCipher(plainAlphabet string) CiphererDecipherer {
 	return StdCipher{
-		name:          "StandardCipherer",
+		name:          "CeasarCipherer",
 		plainAlphabet: plainAlphabet,
 		keyAlphabet:   RotateUTF8(3, plainAlphabet),
 	}
@@ -35,14 +35,12 @@ func (c StdCipher) Name() string {
 }
 
 func (c StdCipher) Description() string {
-	return `Keyword Cipher encodes a plaintext based on a given keyword.
-The key alphabet will be constructed as follows.
-First, the keyword will be stripped to contain only unique characters.
-Second, the alphabet will be appended with no characters from the keyword.
+	return `Standard Cipher encodes a plaintext by using a 
+shift rotated alphabet. 
 
-	// Example:
-	// Input: ASECRETKEYWORD, StdUppercaseAlphabet
-	// ASECRTKYWODBFGHIJLMNPQRUVXYZ
+	// Example of Shift rotated alphabet:
+	// Input: 13, StdUppercaseAlphabet
+	// NOPQRSTUVWXYZABCDEFGHIJKLM
 `
 }
 

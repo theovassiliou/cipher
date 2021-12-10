@@ -43,7 +43,7 @@ Second, the alphabet will be appended with no characters from the keyword.
 // NewKeywordAlphabet create a new, supposed secret key alphabet based on a given keyword,
 // white spaces and any other special character are not treated special
 //
-// Example:
+// Example for key alphabet:
 // Input: ASECRETKEYWORD, StdUppercaseAlphabet
 // ASECRTKYWODBFGHIJLMNPQRUVXYZ
 func NewKeywordAlphabet(keyword, plainAlphabet string) string {
