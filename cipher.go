@@ -43,6 +43,9 @@ shift rotated alphabet.
 	// NOPQRSTUVWXYZABCDEFGHIJKLM
 `
 }
+func (c StdCipher) KeyAlphabet() string {
+	return c.keyAlphabet
+}
 
 func stdDecipher(plainAlphabet, keyAlphabet, ciphertext string) (input string) {
 	paRunes := []rune(plainAlphabet)

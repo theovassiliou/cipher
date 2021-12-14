@@ -28,6 +28,10 @@ func (c KeywordCipher) Name() string {
 	return c.name
 }
 
+func (c KeywordCipher) KeyAlphabet() string {
+	return c.keyAlphabet
+}
+
 func (c KeywordCipher) Description() string {
 	return `Keyword Cipher encodes a plaintext based on a given keyword.
 The key alphabet will be constructed as follows.

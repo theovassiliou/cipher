@@ -7,6 +7,7 @@ const StdAlphabet = StdLowercaseAlphabet + StdUppercaseAlphabet
 type Describer interface {
 	Name() string
 	Description() string
+	KeyAlphabet() string
 }
 type Cipherer interface {
 	Cipher(plaintext string) string
