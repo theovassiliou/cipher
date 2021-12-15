@@ -13,44 +13,43 @@ This can be changed via options.
 
 For the [CLI](adr/0002-use-the-ciphers-via-command-line.md) the following options are available.
 
-### cipher
+### ciphertool cipher
 
-cipher [text]
+ciphertool cipher [text]
 
-### cipher --decipher
+### ciphertool --decipher
 
-cipher --decipher [text]
-
-### cipher --cipher
+cipher decipher [text]
+### ciphertool [cipher|decipher] --cipher
 
 --cipher options defines which cipher to use. Currently the following ciphers are supported
 
-cipher --cipher rotation:n
+ciphertool --cipher rotation:n
 key alphabet is build by left rotating plainalphabet by n characters
 
-cipher --cipher rotation:-n
+ciphertool --cipher rotation:-n
 key alphabet is build by right rotating plainalphabet by n characters
 
-cipher --cipher caesar*
+ciphertool --cipher caesar*
 aquivalent to cipher --cipher rotation:3
 
-cipher --cipher reverse
+ciphertool --cipher reverse
 key alphabet is build by reversing the order of characters of plain alphabet
 
-cipher --cipher keyword:WEISSKOPFSEEADLER
+ciphertool --cipher keyword:WEISSKOPFSEEADLER
 key alphabet is build as WEISKOPFADLRBCGHJMNQTUVXYZ
 
-### cipher --plainalphabet --keyalphabet
+### ciphertool --plainalphabet --keyalphabet
 
-### ciper --raw
+### ciphertool --raw
 
 Plaintext and keywords are not preprocessed, i.e. capitalized.
 
-### ciper --strip
+### ciphertool --strip
 
 Strips any characters from the plaintext not included in the plainalphabet, before encoding.
 
-### cipher --group n
+### ciphertool --group n
 
 ciphertext is split by group of n characters. Implies --strip
 
