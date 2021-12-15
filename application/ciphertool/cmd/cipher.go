@@ -36,8 +36,9 @@ var cipherCmd = &cobra.Command{
 selected algorithm.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		ct := readInputText(cmd, args)
+
 		cc := cipher.NewCaesarCipher(cipher.StdUppercaseAlphabet)
-		pt := cc.Cipher(ct)
+		pt := cc.Cipher(normalize(cmd, ct))
 		fmt.Println(pt)
 	},
 }

@@ -61,7 +61,7 @@ func init() {
 
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.ciphertool.yaml)")
 	rootCmd.PersistentFlags().StringP("filename", "f", "", "input filename")
-
+	rootCmd.PersistentFlags().Bool("raw", false, "do not prepro")
 	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
 
@@ -94,6 +94,18 @@ func check(e error, exitcode int) {
 		fmt.Println(e)
 		os.Exit(exitcode)
 	}
+}
+
+func normalize(cmd *cobra.Command, input string) string {
+
+	raw, err := cmd.Flags().GetBool("raw")
+
+	check(err, exitcodes.CMDLINE_USAGE_ERROR)
+
+	if !raw {
+		return strings.ToUpper(input)
+	}
+	return input
 }
 
 func readInputText(cmd *cobra.Command, args []string) string {

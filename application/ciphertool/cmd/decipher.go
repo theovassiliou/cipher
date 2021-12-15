@@ -37,7 +37,7 @@ according to the selected algorithm.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		ct := readInputText(cmd, args)
 		cc := cipher.NewCaesarCipher(cipher.StdUppercaseAlphabet)
-		pt := cc.Decipher(ct)
+		pt := cc.Decipher(normalize(cmd, ct))
 		fmt.Println(pt)
 
 	},
