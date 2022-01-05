@@ -10,6 +10,10 @@ Options [4. Stdin as Default input](0004-stdin-as-default-input.md)
 
 Options [5. Normalization of input / keyword charakters](0005-normalization-of-input-keyword-charakters.md)
 
+Implements [8. Rotation Cipher](0008-rotation-cipher.md)
+
+Options [8. Rotation Cipher](0008-rotation-cipher.md)
+
 ## Context
 
 We have created a framework for developing text ciphers. To use them we would like to use them

@@ -25,7 +25,6 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
-	"github.com/theovassiliou/cipher"
 )
 
 // decipherCmd represents the decipher command
@@ -36,7 +35,7 @@ var decipherCmd = &cobra.Command{
 according to the selected algorithm.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		ct := readInputText(cmd, args)
-		cc := cipher.NewCaesarCipher(cipher.StdUppercaseAlphabet)
+		cc := getCipherer(cmd, args)
 		pt := cc.Decipher(normalize(cmd, ct))
 		fmt.Fprint(cmd.OutOrStdout(), pt)
 	},

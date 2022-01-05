@@ -40,7 +40,7 @@ func buildArgs(command string, flags []string, text string) []string {
 	return args
 }
 
-func TestNewRootCmd(t *testing.T) {
+func TestStd(t *testing.T) {
 	setup()
 
 	type args struct {
@@ -60,44 +60,256 @@ func TestNewRootCmd(t *testing.T) {
 			args: args{
 				command:  "cipher",
 				flags:    []string{},
-				text:     "HELLO WORLD",
+				text:     "ABCDE FGHI",
 				decipher: "decipher",
 			},
-			want: "KHOOR ZRUOG",
+			want: "DEFGH IJKL",
 		},
 		{
 			name: "simple small letters ciphering",
 			args: args{
 				command:  "cipher",
 				flags:    []string{},
-				text:     "hello world",
+				text:     "abcde fghi",
 				decipher: "",
 			},
-			want: "KHOOR ZRUOG",
+			want: "DEFGH IJKL",
 		},
 		{
 			name: "simple small letters deciphering",
 			args: args{
 				command:  "decipher",
 				flags:    []string{},
-				text:     "khoor zruog",
+				text:     "defgh ijkl",
 				decipher: "",
 			},
-			want: "HELLO WORLD",
+			want: "ABCDE FGHI",
 		},
 		{
-			name: "simple cipher --raw",
+			name: "simple cipher out of alphabet --raw",
 			args: args{
 				command: "cipher",
 				flags:   []string{"--raw"},
-				text:    "hello world",
+				text:    "abcd efgh",
 			},
-			want: "hello world",
+			want: "abcd efgh",
+		},
+		{
+			name: "simple cipher within alphabet --raw",
+			args: args{
+				command: "cipher",
+				flags:   []string{"--raw"},
+				text:    "ABCD EFGH",
+			},
+			want: "DEFG HIJK",
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			c := bytes.NewBufferString("")
+			rootCmd.SetOut(c)
+			rootCmd.SetArgs(buildArgs(tt.args.command, tt.args.flags, tt.args.text))
+			rootCmd.Execute()
+			out, err := ioutil.ReadAll(c)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if string(out) != tt.want {
+				t.Fatalf("expected \"%s\" got \"%s\"", tt.want, string(out))
+			}
+		})
+
+		if tt.args.decipher == "decipher" ||
+			tt.args.decipher == "cipher" {
+			t.Run(tt.name+"+"+tt.args.decipher, func(t *testing.T) {
+				c := bytes.NewBufferString("")
+				rootCmd.SetOut(c)
+				rootCmd.SetArgs(buildArgs(tt.args.decipher, tt.args.flags, tt.want))
+				rootCmd.Execute()
+				out, err := ioutil.ReadAll(c)
+				if err != nil {
+					t.Fatal(err)
+				}
+				if string(out) != tt.args.text {
+					t.Fatalf("expected \"%s\" got \"%s\"", tt.args.text, string(out))
+				}
+			})
+		}
+	}
+}
+
+func TestCipherRotationOption(t *testing.T) {
+	setup()
+
+	type args struct {
+		command  string
+		flags    []string
+		text     string
+		decipher string
+	}
+
+	tests := []struct {
+		name string
+		args args
+		want string
+	}{
+		{
+			name: "rotation cipher",
+			args: args{
+				command:  "cipher",
+				flags:    []string{"--cipher", "rotation"},
+				text:     "ABCDE",
+				decipher: "decipher",
+			},
+			want: "DEFGH",
+		},
+		{
+			name: "rotation:5 cipher",
+			args: args{
+				command:  "cipher",
+				flags:    []string{"--cipher", "rotation:5"},
+				text:     "ABCDE",
+				decipher: "decipher",
+			},
+			want: "FGHIJ",
+		},
+		{
+			name: "rotation:-5 cipher",
+			args: args{
+				command:  "cipher",
+				flags:    []string{"--cipher", "rotation:-5"},
+				text:     "ABCDE",
+				decipher: "decipher",
+			},
+			want: "VWXYZ",
+		},
+		{
+			name: "raw rotation:5 cipher raw",
+			args: args{
+				command:  "cipher",
+				flags:    []string{"--raw", "--cipher", "rotation:5"},
+				text:     "ABCDE",
+				decipher: "decipher",
+			},
+			want: "FGHIJ",
+		},
+		{
+			name: "raw rotation:5 cipher raw small",
+			args: args{
+				command:  "cipher",
+				flags:    []string{"--raw", "--cipher", "rotation:5"},
+				text:     "abcde",
+				decipher: "decipher",
+			},
+			want: "abcde",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := bytes.NewBufferString("")
+			rootCmd.SetOut(c)
+			rootCmd.SetArgs(buildArgs(tt.args.command, tt.args.flags, tt.args.text))
+			rootCmd.Execute()
+			out, err := ioutil.ReadAll(c)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if string(out) != tt.want {
+				t.Fatalf("expected \"%s\" got \"%s\"", tt.want, string(out))
+			}
+		})
+
+		if tt.args.decipher == "decipher" ||
+			tt.args.decipher == "cipher" {
+			t.Run(tt.name+"+"+tt.args.decipher, func(t *testing.T) {
+				c := bytes.NewBufferString("")
+				rootCmd.SetOut(c)
+				rootCmd.SetArgs(buildArgs(tt.args.decipher, tt.args.flags, tt.want))
+				rootCmd.Execute()
+				out, err := ioutil.ReadAll(c)
+				if err != nil {
+					t.Fatal(err)
+				}
+				if string(out) != tt.args.text {
+					t.Fatalf("expected \"%s\" got \"%s\"", tt.args.text, string(out))
+				}
+			})
+		}
+	}
+}
+
+func TestCipherReverse(t *testing.T) {
+	setup()
+
+	type args struct {
+		command  string
+		flags    []string
+		text     string
+		decipher string
+	}
+
+	tests := []struct {
+		name string
+		args args
+		want string
+	}{
+
+		{
+			name: "reverse cipher",
+			args: args{
+				command:  "cipher",
+				flags:    []string{"--cipher", "reverse"},
+				text:     "ABCDE",
+				decipher: "decipher",
+			},
+			want: "ZYXWV",
+		},
+		{
+			name: "reverse cipher WS",
+			args: args{
+				command:  "cipher",
+				flags:    []string{"--cipher", "reverse"},
+				text:     "ABCD EFGH",
+				decipher: "decipher",
+			},
+			want: "ZYXW VUTS",
+		},
+		{
+			name: "reverse cipher small WS",
+			args: args{
+				command:  "cipher",
+				flags:    []string{"--cipher", "reverse"},
+				text:     "abcd efgh",
+				decipher: "",
+			},
+			want: "ZYXW VUTS",
+		},
+		{
+			name: "reverse cipher small raw WS",
+			args: args{
+				command:  "cipher",
+				flags:    []string{"--cipher", "reverse", "--raw"},
+				text:     "abcd efgh",
+				decipher: "",
+			},
+			want: "abcd efgh",
+		},
+		{
+			name: "reverse decipher small raw WS",
+			args: args{
+				command:  "decipher",
+				flags:    []string{"--cipher", "reverse", "--raw"},
+				text:     "abcd efgh",
+				decipher: "",
+			},
+			want: "abcd efgh",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name+"+"+tt.args.command, func(t *testing.T) {
 			c := bytes.NewBufferString("")
 			rootCmd.SetOut(c)
 			rootCmd.SetArgs(buildArgs(tt.args.command, tt.args.flags, tt.args.text))

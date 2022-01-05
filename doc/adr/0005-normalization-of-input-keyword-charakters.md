@@ -8,6 +8,8 @@ Accepted
 
 Implements [2. Use the ciphers via command line](0002-use-the-ciphers-via-command-line.md)
 
+Refined by [7. Raw input](0007-raw-input.md)
+
 ## Context
 
 In ciphering typically either lower case or upper case alphabets are being used for the plain and key alphabet. While there is no technical reason to limit this, this is often observed.

@@ -26,10 +26,10 @@ cipher decipher [text]
 --cipher option defines which cipher to use. Currently, the following ciphers are supported
 
 ciphertool --cipher rotation:n
-key alphabet is built by left rotating plain alphabet by n characters
+key alphabet is built by [left rotating](adr/0008-rotation-cipher.md) plain alphabet by n characters
 
 ciphertool --cipher rotation:-n
-key alphabet is built by right rotating plain alphabet by n characters
+key alphabet is built by [right rotating](adr/0008-rotation-cipher.md) plain alphabet by n characters
 
 ciphertool --cipher caesar*
 aquivalent to `cipher --cipher rotation:3`

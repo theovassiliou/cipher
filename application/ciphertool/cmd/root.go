@@ -25,15 +25,26 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"strconv"
 	"strings"
 
 	"github.com/spf13/cobra"
+	"github.com/theovassiliou/cipher"
 	exitcodes "github.com/theovassiliou/go-exitcodes"
 
 	"github.com/spf13/viper"
 )
 
 var cfgFile string
+
+var defaultCipher = cipher.NewCaesarCipher(cipher.StdUppercaseAlphabet)
+var defaultRottation = 3
+
+var ciphers = map[string]cipher.CiphererDecipherer{
+	"rotation": cipher.NewStdCipher(cipher.StdUppercaseAlphabet, cipher.RotateUTF8(defaultRottation, cipher.StdUppercaseAlphabet)),
+	"caesar":   defaultCipher,
+	"reverse":  cipher.NewStdCipher(cipher.StdUppercaseAlphabet, cipher.ReverseUTF8(cipher.StdUppercaseAlphabet)),
+}
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -55,7 +66,8 @@ func init() {
 
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.ciphertool.yaml)")
 	rootCmd.PersistentFlags().StringP("filename", "f", "", "input filename")
-	rootCmd.PersistentFlags().Bool("raw", false, "do not prepro")
+	rootCmd.PersistentFlags().Bool("raw", false, "do not preprocess input string or keywords")
+	rootCmd.PersistentFlags().StringP("cipher", "c", "rotation:3", "name of the cipher and rotation. One of "+printAvailableCiphers())
 	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
 
@@ -125,4 +137,58 @@ func readInputText(cmd *cobra.Command, args []string) string {
 	}
 	return ct
 
+}
+
+func getCipherer(cmd *cobra.Command, args []string) cipher.CiphererDecipherer {
+	ciphernameparam, err := cmd.Flags().GetString("cipher")
+	check(err, exitcodes.CMDLINE_USAGE_ERROR)
+	if ciphernameparam == "" {
+		return defaultCipher
+	}
+
+	var ciphername = "caesar"
+	var param string
+
+	cipherstruct := strings.Split(ciphernameparam, ":")
+	fmt.Printf("DELETE: cipherstruct: %v\n", cipherstruct)
+
+	switch len(cipherstruct) {
+	case 1:
+		ciphername = cipherstruct[0]
+	case 2:
+		ciphername = cipherstruct[0]
+		param = cipherstruct[1]
+	default:
+		ciphername = ciphernameparam
+	}
+
+	theCipher := ciphers[ciphername]
+	if theCipher == nil {
+		fmt.Printf("Unknwon cipher: %s\n", strings.Split(ciphernameparam, ":")[0])
+		os.Exit(exitcodes.CMDLINE_USAGE_ERROR)
+	}
+
+	switch ciphername {
+	// Here some specialization
+	case "rotation":
+		if param == "" {
+			param = strconv.Itoa(defaultRottation)
+		}
+		rot, err := strconv.Atoi(param)
+		check(err, exitcodes.CMDLINE_USAGE_ERROR)
+		theCipher = cipher.NewStdCipher(cipher.StdUppercaseAlphabet, cipher.RotateUTF8(rot, cipher.StdUppercaseAlphabet))
+		ciphers["rotation"] = theCipher
+	}
+	return theCipher
+}
+
+func printAvailableCiphers() string {
+	var s = []string{}
+
+	for i, _ := range ciphers {
+		s = append(s, i)
+	}
+
+	s2 := fmt.Sprintf("%s", s)
+	return s2
 }
