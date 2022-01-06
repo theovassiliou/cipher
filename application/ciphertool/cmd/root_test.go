@@ -341,3 +341,95 @@ func TestCipherReverse(t *testing.T) {
 		}
 	}
 }
+
+func TestCipherKeyword(t *testing.T) {
+	setup()
+
+	type args struct {
+		command  string
+		flags    []string
+		text     string
+		decipher string
+	}
+
+	tests := []struct {
+		name string
+		args args
+		want string
+	}{
+		/*
+			{
+				name: "keyword cipher wo keyword",
+				args: args{
+					command:  "cipher",
+					flags:    []string{"--cipher", "keyword"},
+					text:     "ABCDE",
+					decipher: "decipher",
+				},
+				want: "ABCDE",
+			},
+			{
+				name: "keyword cipher wo keyword but delimeter",
+				args: args{
+					command:  "cipher",
+					flags:    []string{"--cipher", "keyword:"},
+					text:     "ABCDE",
+					decipher: "decipher",
+				},
+				want: "ABCDE",
+			}, */
+		{
+			name: "keyword cipher w keyword out of alphabet",
+			args: args{
+				command:  "cipher",
+				flags:    []string{"--cipher", "keyword:weisskopfseeadler"},
+				text:     "ABCDE",
+				decipher: "decipher",
+			},
+			want: "ABCDE",
+		},
+		/* 		{
+			name: "keyword cipher w keyword",
+			args: args{
+				command:  "cipher",
+				flags:    []string{"--cipher", "keyword:WEISKOPFSEEADLER"},
+				text:     "NYT SEITE8 HEUTE 6PM BPPUTHAUS",
+				decipher: "decipher",
+			},
+			want: "CYQ NKAQK8 FKTQK 6HB EHHTQFWTN",
+		}, */
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name+"+"+tt.args.command, func(t *testing.T) {
+			c := bytes.NewBufferString("")
+			rootCmd.SetOut(c)
+			rootCmd.SetArgs(buildArgs(tt.args.command, tt.args.flags, tt.args.text))
+			rootCmd.Execute()
+			out, err := ioutil.ReadAll(c)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if string(out) != tt.want {
+				t.Fatalf("expected \"%s\" got \"%s\"", tt.want, string(out))
+			}
+		})
+
+		if tt.args.decipher == "decipher" ||
+			tt.args.decipher == "cipher" {
+			t.Run(tt.name+"+"+tt.args.decipher, func(t *testing.T) {
+				c := bytes.NewBufferString("")
+				rootCmd.SetOut(c)
+				rootCmd.SetArgs(buildArgs(tt.args.decipher, tt.args.flags, tt.want))
+				rootCmd.Execute()
+				out, err := ioutil.ReadAll(c)
+				if err != nil {
+					t.Fatal(err)
+				}
+				if string(out) != tt.args.text {
+					t.Fatalf("expected \"%s\" got \"%s\"", tt.args.text, string(out))
+				}
+			})
+		}
+	}
+}

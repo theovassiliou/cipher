@@ -46,16 +46,22 @@ Second, the alphabet will be appended with no characters from the keyword.
 
 // NewKeywordAlphabet create a new, supposed secret key alphabet based on a given keyword,
 // white spaces and any other special character are not treated special
-//
+// Characters of keyword must be included in plainAlphabet, otherwise character
+// will be ignored in key alphabet.
+
 // Example for key alphabet:
 // Input: ASECRETKEYWORD, StdUppercaseAlphabet
 // ASECRTKYWODBFGHIJLMNPQRUVXYZ
 func NewKeywordAlphabet(keyword, plainAlphabet string) string {
 	var keyAlphabet []rune
+	plainAlphabetRunes := []rune(plainAlphabet)
+
 	strippedKeyword := StripDuplicates(keyword)
 
 	for _, c := range strippedKeyword {
-		keyAlphabet = append(keyAlphabet, c)
+		if contains(plainAlphabetRunes, c) {
+			keyAlphabet = append(keyAlphabet, c)
+		}
 	}
 
 	for _, c := range plainAlphabet {

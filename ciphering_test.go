@@ -220,7 +220,7 @@ func TestNewAlphabet_Plain(t *testing.T) {
 				keyword:      StdUppercaseAlphabet,
 				baseAlphabet: "",
 			},
-			want: StdUppercaseAlphabet,
+			want: "",
 		},
 		{
 			name: "KEYWORD and Alphabet",
@@ -236,7 +236,7 @@ func TestNewAlphabet_Plain(t *testing.T) {
 				keyword:      "A SECRET KEYWORD",
 				baseAlphabet: StdUppercaseAlphabet,
 			},
-			want: "A SECRTKYWODBFGHIJLMNPQUVXZ",
+			want: "ASECRTKYWODBFGHIJLMNPQUVXZ",
 		},
 	}
 	for _, tt := range tests {
@@ -262,17 +262,9 @@ func TestNewAlphabet_UT8(t *testing.T) {
 			name: "KEYWORD and Alphabet",
 			args: args{
 				keyword:      "πανμετροναριστον",
-				baseAlphabet: StdLowercaseAlphabet,
+				baseAlphabet: StdGreekLowercaseAlphabet,
 			},
-			want: "πανμετροισabcdefghijklmnopqrstuvwxyz",
-		},
-		{
-			name: "KEYWORD and Alphabet",
-			args: args{
-				keyword:      "πανmetronαριστον",
-				baseAlphabet: StdLowercaseAlphabet,
-			},
-			want: "πανmetronριστοabcdfghijklpqsuvwxyz",
+			want: "πανμετροισβγδζηθκλξυφχψω",
 		},
 	}
 	for _, tt := range tests {

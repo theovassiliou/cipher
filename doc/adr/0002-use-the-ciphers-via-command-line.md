@@ -14,6 +14,8 @@ Implements [8. Rotation Cipher](0008-rotation-cipher.md)
 
 Options [8. Rotation Cipher](0008-rotation-cipher.md)
 
+Options [9. Keyword cipher](0009-keyword-cipher.md)
+
 ## Context
 
 We have created a framework for developing text ciphers. To use them we would like to use them

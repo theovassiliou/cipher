@@ -32,7 +32,7 @@ ciphertool --cipher rotation:-n
 key alphabet is built by [right rotating](adr/0008-rotation-cipher.md) plain alphabet by n characters
 
 ciphertool --cipher caesar*
-aquivalent to `cipher --cipher rotation:3`
+eequivalentto `cipher --cipher rotation:3`
 
 ciphertool --cipher reverse
 key alphabet is built by reversing the order of characters of plain alphabet

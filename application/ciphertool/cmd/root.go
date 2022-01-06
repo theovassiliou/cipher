@@ -44,6 +44,7 @@ var ciphers = map[string]cipher.CiphererDecipherer{
 	"rotation": cipher.NewStdCipher(cipher.StdUppercaseAlphabet, cipher.RotateUTF8(defaultRottation, cipher.StdUppercaseAlphabet)),
 	"caesar":   defaultCipher,
 	"reverse":  cipher.NewStdCipher(cipher.StdUppercaseAlphabet, cipher.ReverseUTF8(cipher.StdUppercaseAlphabet)),
+	"keyword":  cipher.NewKeywordCipherer("", cipher.StdUppercaseAlphabet),
 }
 
 // rootCmd represents the base command when called without any subcommands
@@ -178,6 +179,9 @@ func getCipherer(cmd *cobra.Command, args []string) cipher.CiphererDecipherer {
 		check(err, exitcodes.CMDLINE_USAGE_ERROR)
 		theCipher = cipher.NewStdCipher(cipher.StdUppercaseAlphabet, cipher.RotateUTF8(rot, cipher.StdUppercaseAlphabet))
 		ciphers["rotation"] = theCipher
+	case "keyword":
+		theCipher = cipher.NewKeywordCipherer(param, cipher.StdUppercaseAlphabet)
+		ciphers["keyword"] = theCipher
 	}
 	return theCipher
 }
