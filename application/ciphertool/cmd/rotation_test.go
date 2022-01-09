@@ -25,27 +25,9 @@ import (
 	"bytes"
 	"io/ioutil"
 	"testing"
-
-	"github.com/spf13/cobra"
 )
 
-func setup() *cobra.Command {
-	testCommand := NewRootCmd()
-	initC(testCommand)
-	testCommand.AddCommand(NewCipherCommand())
-	testCommand.AddCommand(NewDecipherCommand())
-	return testCommand
-}
-
-func buildArgs(command string, flags []string, text string) []string {
-	args := []string{}
-	args = append(args, command)
-	args = append(args, flags...)
-	args = append(args, text)
-	return args
-}
-
-func TestStd(t *testing.T) {
+func TestCipherRotationOption(t *testing.T) {
 
 	type args struct {
 		command  string
@@ -60,42 +42,54 @@ func TestStd(t *testing.T) {
 		want string
 	}{
 		{
-			name: "simple small letters ciphering",
+			name: "rotation cipher",
 			args: args{
 				command:  "cipher",
-				flags:    []string{},
-				text:     "abcde fghi",
-				decipher: "",
+				flags:    []string{"--cipher", "rotation"},
+				text:     "ABCDE",
+				decipher: "decipher",
 			},
-			want: "DEFGH IJKL",
+			want: "DEFGH",
 		},
 		{
-			name: "simple small letters deciphering",
+			name: "rotation:5 cipher",
 			args: args{
-				command:  "decipher",
-				flags:    []string{},
-				text:     "defgh ijkl",
-				decipher: "",
+				command:  "cipher",
+				flags:    []string{"--cipher", "rotation:5"},
+				text:     "ABCDE",
+				decipher: "decipher",
 			},
-			want: "ABCDE FGHI",
+			want: "FGHIJ",
 		},
 		{
-			name: "simple cipher out of alphabet --raw",
+			name: "rotation:-5 cipher",
 			args: args{
-				command: "cipher",
-				flags:   []string{"--raw"},
-				text:    "abcd efgh",
+				command:  "cipher",
+				flags:    []string{"--cipher", "rotation:-5"},
+				text:     "ABCDE",
+				decipher: "decipher",
 			},
-			want: "abcd efgh",
+			want: "VWXYZ",
 		},
 		{
-			name: "simple cipher within alphabet --raw",
+			name: "raw rotation:5 cipher raw",
 			args: args{
-				command: "cipher",
-				flags:   []string{"--raw"},
-				text:    "ABCD EFGH",
+				command:  "cipher",
+				flags:    []string{"--raw", "--cipher", "rotation:5"},
+				text:     "ABCDE",
+				decipher: "decipher",
 			},
-			want: "DEFG HIJK",
+			want: "FGHIJ",
+		},
+		{
+			name: "raw rotation:5 cipher raw small",
+			args: args{
+				command:  "cipher",
+				flags:    []string{"--raw", "--cipher", "rotation:5"},
+				text:     "abcde",
+				decipher: "decipher",
+			},
+			want: "abcde",
 		},
 	}
 
@@ -107,7 +101,6 @@ func TestStd(t *testing.T) {
 			testCmd.SetArgs(buildArgs(tt.args.command, tt.args.flags, tt.args.text))
 			testCmd.Execute()
 			out, err := ioutil.ReadAll(c)
-
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -119,8 +112,8 @@ func TestStd(t *testing.T) {
 		if tt.args.decipher == "decipher" ||
 			tt.args.decipher == "cipher" {
 			t.Run(tt.name+"+"+tt.args.decipher, func(t *testing.T) {
-				c := bytes.NewBufferString("")
 				testCmd := setup()
+				c := bytes.NewBufferString("")
 				testCmd.SetOut(c)
 				testCmd.SetArgs(buildArgs(tt.args.decipher, tt.args.flags, tt.want))
 				testCmd.Execute()

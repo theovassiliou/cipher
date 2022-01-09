@@ -25,27 +25,10 @@ import (
 	"bytes"
 	"io/ioutil"
 	"testing"
-
-	"github.com/spf13/cobra"
 )
 
-func setup() *cobra.Command {
-	testCommand := NewRootCmd()
-	initC(testCommand)
-	testCommand.AddCommand(NewCipherCommand())
-	testCommand.AddCommand(NewDecipherCommand())
-	return testCommand
-}
-
-func buildArgs(command string, flags []string, text string) []string {
-	args := []string{}
-	args = append(args, command)
-	args = append(args, flags...)
-	args = append(args, text)
-	return args
-}
-
-func TestStd(t *testing.T) {
+func TestCipherReverse(t *testing.T) {
+	setup()
 
 	type args struct {
 		command  string
@@ -59,55 +42,67 @@ func TestStd(t *testing.T) {
 		args args
 		want string
 	}{
+
 		{
-			name: "simple small letters ciphering",
+			name: "reverse cipher",
 			args: args{
 				command:  "cipher",
-				flags:    []string{},
-				text:     "abcde fghi",
-				decipher: "",
+				flags:    []string{"--cipher", "reverse"},
+				text:     "ABCDE",
+				decipher: "decipher",
 			},
-			want: "DEFGH IJKL",
+			want: "ZYXWV",
 		},
 		{
-			name: "simple small letters deciphering",
+			name: "reverse cipher WS",
 			args: args{
-				command:  "decipher",
-				flags:    []string{},
-				text:     "defgh ijkl",
-				decipher: "",
+				command:  "cipher",
+				flags:    []string{"--cipher", "reverse"},
+				text:     "ABCD EFGH",
+				decipher: "decipher",
 			},
-			want: "ABCDE FGHI",
+			want: "ZYXW VUTS",
 		},
 		{
-			name: "simple cipher out of alphabet --raw",
+			name: "reverse cipher small WS",
 			args: args{
-				command: "cipher",
-				flags:   []string{"--raw"},
-				text:    "abcd efgh",
+				command:  "cipher",
+				flags:    []string{"--cipher", "reverse"},
+				text:     "abcd efgh",
+				decipher: "",
+			},
+			want: "ZYXW VUTS",
+		},
+		{
+			name: "reverse cipher small raw WS",
+			args: args{
+				command:  "cipher",
+				flags:    []string{"--cipher", "reverse", "--raw"},
+				text:     "abcd efgh",
+				decipher: "",
 			},
 			want: "abcd efgh",
 		},
 		{
-			name: "simple cipher within alphabet --raw",
+			name: "reverse decipher small raw WS",
 			args: args{
-				command: "cipher",
-				flags:   []string{"--raw"},
-				text:    "ABCD EFGH",
+				command:  "decipher",
+				flags:    []string{"--cipher", "reverse", "--raw"},
+				text:     "abcd efgh",
+				decipher: "",
 			},
-			want: "DEFG HIJK",
+			want: "abcd efgh",
 		},
 	}
 
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name+"+"+tt.args.command, func(t *testing.T) {
 			testCmd := setup()
 			c := bytes.NewBufferString("")
 			testCmd.SetOut(c)
 			testCmd.SetArgs(buildArgs(tt.args.command, tt.args.flags, tt.args.text))
 			testCmd.Execute()
 			out, err := ioutil.ReadAll(c)
-
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -119,8 +114,8 @@ func TestStd(t *testing.T) {
 		if tt.args.decipher == "decipher" ||
 			tt.args.decipher == "cipher" {
 			t.Run(tt.name+"+"+tt.args.decipher, func(t *testing.T) {
-				c := bytes.NewBufferString("")
 				testCmd := setup()
+				c := bytes.NewBufferString("")
 				testCmd.SetOut(c)
 				testCmd.SetArgs(buildArgs(tt.args.decipher, tt.args.flags, tt.want))
 				testCmd.Execute()

@@ -28,17 +28,21 @@ import (
 )
 
 // decipherCmd represents the decipher command
-var decipherCmd = &cobra.Command{
-	Use:   "decipher",
-	Short: "deciphers a ciphertext",
-	Long: `With decipher a ciphertext will be deciphered
+var decipherCmd = NewDecipherCommand()
+
+func NewDecipherCommand() *cobra.Command {
+	return &cobra.Command{
+		Use:   "decipher",
+		Short: "deciphers a ciphertext",
+		Long: `With decipher a ciphertext will be deciphered
 according to the selected algorithm.`,
-	Run: func(cmd *cobra.Command, args []string) {
-		ct := readInputText(cmd, args)
-		cc := getCipherer(cmd, args)
-		pt := cc.Decipher(normalize(cmd, ct))
-		fmt.Fprint(cmd.OutOrStdout(), pt)
-	},
+		Run: func(cmd *cobra.Command, args []string) {
+			ct := readInputText(cmd, args)
+			cc := getCipherer(cmd, args)
+			pt := cc.Decipher(normalize(cmd, ct))
+			fmt.Fprint(cmd.OutOrStdout(), pt)
+		},
+	}
 }
 
 func init() {

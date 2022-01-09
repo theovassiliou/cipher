@@ -48,12 +48,16 @@ var ciphers = map[string]cipher.CiphererDecipherer{
 }
 
 // rootCmd represents the base command when called without any subcommands
-var rootCmd = &cobra.Command{
-	Use:   "ciphertool",
-	Short: "A tool to cipher and decipher text",
-	Long: `chiphertool is CLI tool to cipher and decipher text using
-a set of different cipher algorithms.`,
-	// Run: func(cmd *cobra.Command, args []string) {},
+var rootCmd = NewRootCmd()
+
+func NewRootCmd() *cobra.Command {
+	return &cobra.Command{
+		Use:   "ciphertool",
+		Short: "A tool to cipher and decipher text",
+		Long: `chiphertool is CLI tool to cipher and decipher text using
+	a set of different cipher algorithms.`,
+		// Run: func(cmd *cobra.Command, args []string) {},
+	}
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -62,14 +66,17 @@ func Execute() {
 	cobra.CheckErr(rootCmd.Execute())
 }
 
+func initC(c *cobra.Command) {
+	c.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.ciphertool.yaml)")
+	c.PersistentFlags().StringP("filename", "f", "", "input filename")
+	c.PersistentFlags().Bool("raw", false, "do not preprocess input string or keywords")
+	c.PersistentFlags().StringP("cipher", "c", "rotation:3", "name of the cipher and rotation. One of "+printAvailableCiphers())
+	c.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+}
+
 func init() {
 	cobra.OnInitialize(initConfig)
-
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.ciphertool.yaml)")
-	rootCmd.PersistentFlags().StringP("filename", "f", "", "input filename")
-	rootCmd.PersistentFlags().Bool("raw", false, "do not preprocess input string or keywords")
-	rootCmd.PersistentFlags().StringP("cipher", "c", "rotation:3", "name of the cipher and rotation. One of "+printAvailableCiphers())
-	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	initC(rootCmd)
 }
 
 // initConfig reads in config file and ENV variables if set.
@@ -151,7 +158,6 @@ func getCipherer(cmd *cobra.Command, args []string) cipher.CiphererDecipherer {
 	var param string
 
 	cipherstruct := strings.Split(ciphernameparam, ":")
-	fmt.Printf("DELETE: cipherstruct: %v\n", cipherstruct)
 
 	switch len(cipherstruct) {
 	case 1:
@@ -180,7 +186,7 @@ func getCipherer(cmd *cobra.Command, args []string) cipher.CiphererDecipherer {
 		theCipher = cipher.NewStdCipher(cipher.StdUppercaseAlphabet, cipher.RotateUTF8(rot, cipher.StdUppercaseAlphabet))
 		ciphers["rotation"] = theCipher
 	case "keyword":
-		theCipher = cipher.NewKeywordCipherer(param, cipher.StdUppercaseAlphabet)
+		theCipher = cipher.NewKeywordCipherer(normalize(cmd, param), cipher.StdUppercaseAlphabet)
 		ciphers["keyword"] = theCipher
 	}
 	return theCipher
@@ -189,7 +195,7 @@ func getCipherer(cmd *cobra.Command, args []string) cipher.CiphererDecipherer {
 func printAvailableCiphers() string {
 	var s = []string{}
 
-	for i, _ := range ciphers {
+	for i := range ciphers {
 		s = append(s, i)
 	}
 

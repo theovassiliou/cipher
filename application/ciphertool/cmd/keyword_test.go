@@ -25,28 +25,9 @@ import (
 	"bytes"
 	"io/ioutil"
 	"testing"
-
-	"github.com/spf13/cobra"
 )
 
-func setup() *cobra.Command {
-	testCommand := NewRootCmd()
-	initC(testCommand)
-	testCommand.AddCommand(NewCipherCommand())
-	testCommand.AddCommand(NewDecipherCommand())
-	return testCommand
-}
-
-func buildArgs(command string, flags []string, text string) []string {
-	args := []string{}
-	args = append(args, command)
-	args = append(args, flags...)
-	args = append(args, text)
-	return args
-}
-
-func TestStd(t *testing.T) {
-
+func TestCipherKeyword(t *testing.T) {
 	type args struct {
 		command  string
 		flags    []string
@@ -60,54 +41,55 @@ func TestStd(t *testing.T) {
 		want string
 	}{
 		{
-			name: "simple small letters ciphering",
+			name: "keyword cipher wo keyword",
 			args: args{
 				command:  "cipher",
-				flags:    []string{},
-				text:     "abcde fghi",
-				decipher: "",
+				flags:    []string{"--cipher", "keyword"},
+				text:     "ABCDE",
+				decipher: "decipher",
 			},
-			want: "DEFGH IJKL",
+			want: "ABCDE",
 		},
 		{
-			name: "simple small letters deciphering",
+			name: "keyword cipher wo keyword but delimeter",
 			args: args{
-				command:  "decipher",
-				flags:    []string{},
-				text:     "defgh ijkl",
-				decipher: "",
+				command:  "cipher",
+				flags:    []string{"--cipher", "keyword:"},
+				text:     "ABCDE",
+				decipher: "decipher",
 			},
-			want: "ABCDE FGHI",
+			want: "ABCDE",
 		},
 		{
-			name: "simple cipher out of alphabet --raw",
+			name: "keyword cipher w keyword out of alphabet",
 			args: args{
-				command: "cipher",
-				flags:   []string{"--raw"},
-				text:    "abcd efgh",
+				command:  "cipher",
+				flags:    []string{"--cipher", "keyword:weisskopfseeadler"},
+				text:     "ABCDE",
+				decipher: "decipher",
 			},
-			want: "abcd efgh",
+			want: "WEISK",
 		},
 		{
-			name: "simple cipher within alphabet --raw",
+			name: "keyword cipher w keyword",
 			args: args{
-				command: "cipher",
-				flags:   []string{"--raw"},
-				text:    "ABCD EFGH",
+				command:  "cipher",
+				flags:    []string{"--cipher", "keyword:WEISKOPFSEEADLER"},
+				text:     "NYT SEITE8 HEUTE 6PM BPPUTHAUS",
+				decipher: "decipher",
 			},
-			want: "DEFG HIJK",
+			want: "CYQ NKAQK8 FKTQK 6HB EHHTQFWTN",
 		},
 	}
 
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name+"+"+tt.args.command, func(t *testing.T) {
 			testCmd := setup()
 			c := bytes.NewBufferString("")
 			testCmd.SetOut(c)
 			testCmd.SetArgs(buildArgs(tt.args.command, tt.args.flags, tt.args.text))
 			testCmd.Execute()
 			out, err := ioutil.ReadAll(c)
-
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -119,8 +101,8 @@ func TestStd(t *testing.T) {
 		if tt.args.decipher == "decipher" ||
 			tt.args.decipher == "cipher" {
 			t.Run(tt.name+"+"+tt.args.decipher, func(t *testing.T) {
-				c := bytes.NewBufferString("")
 				testCmd := setup()
+				c := bytes.NewBufferString("")
 				testCmd.SetOut(c)
 				testCmd.SetArgs(buildArgs(tt.args.decipher, tt.args.flags, tt.want))
 				testCmd.Execute()
