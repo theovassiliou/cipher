@@ -24,7 +24,7 @@ Second, the base alphabet will be appended with no characters from the keyword.
 - Implement keyword cipherer for arbitrary alphabets
 - Implement a shift/rotate right algorithm for arbitrary alphabets
 - Standard alphabet provided is the Latin upper case characters.
-- No prepropreccessing of the keyword, i.e. no capitalisation or the lie
+- No preprocessing of the keyword, i.e. no capitalization or the lie
 
 ## Consequences
 

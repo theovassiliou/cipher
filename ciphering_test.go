@@ -276,61 +276,41 @@ func TestNewAlphabet_UT8(t *testing.T) {
 	}
 }
 
-func ExamplestdCipher_helloWorld() {
+func ExampleNewStdCipher() {
+	cipher := NewStdCipher(StdUppercaseAlphabet, RotateUTF8(3, StdUppercaseAlphabet))
 	cleartext := "HELLO WORLD"
-	encryptedText := stdCipher(StdUppercaseAlphabet, RotateUTF8(3, StdUppercaseAlphabet), cleartext)
+	encryptedText := cipher.Cipher(cleartext)
+	decryptedText := cipher.Decipher(encryptedText)
 
 	fmt.Println(StdUppercaseAlphabet)
 	fmt.Println(RotateUTF8(3, StdUppercaseAlphabet))
 	fmt.Println(cleartext)
 	fmt.Println(encryptedText)
+	fmt.Println(decryptedText)
 	// Output:
 	// ABCDEFGHIJKLMNOPQRSTUVWXYZ
 	// DEFGHIJKLMNOPQRSTUVWXYZABC
 	// HELLO WORLD
 	// KHOOR ZRUOG
-}
-
-func ExamplestdDecipher_helloWorld() {
-	encryptedtext := "KHOOR ZRUOG"
-	cleartext := stdDecipher(StdUppercaseAlphabet, RotateUTF8(3, StdUppercaseAlphabet), encryptedtext)
-
-	fmt.Println(StdUppercaseAlphabet)
-	fmt.Println(RotateUTF8(3, StdUppercaseAlphabet))
-	fmt.Println(encryptedtext)
-	fmt.Println(cleartext)
-	// Output:
-	// ABCDEFGHIJKLMNOPQRSTUVWXYZ
-	// DEFGHIJKLMNOPQRSTUVWXYZABC
-	// KHOOR ZRUOG
 	// HELLO WORLD
 }
 
-func ExamplestdCipher_dreiFragezeichen() {
+func ExampleNewStdCipher_dreiFragezeichen() {
 	cleartext := "NYT SEITE8 HEUTE 6PM BPPUTHAUS"
-	encryptedText := stdCipher(StdUppercaseAlphabet, NewKeywordAlphabet("WEISKOPFSEEADLER", StdUppercaseAlphabet), cleartext)
+	keyalphabet := NewKeywordAlphabet("WEISKOPFSEEADLER", StdUppercaseAlphabet)
+	cipher := NewStdCipher(StdUppercaseAlphabet, keyalphabet)
 
+	encryptedText := cipher.Cipher(cleartext)
+	decryptedText := cipher.Decipher(encryptedText)
 	fmt.Println(StdUppercaseAlphabet)
 	fmt.Println(NewKeywordAlphabet("WEISKOPFSEEADLER", StdUppercaseAlphabet))
 	fmt.Println(cleartext)
 	fmt.Println(encryptedText)
+	fmt.Println(decryptedText)
 	// Output:
 	// ABCDEFGHIJKLMNOPQRSTUVWXYZ
 	// WEISKOPFADLRBCGHJMNQTUVXYZ
 	// NYT SEITE8 HEUTE 6PM BPPUTHAUS
-	// CYQ NKAQK8 FKTQK 6HB EHHTQFWTN
-}
-func ExamplestdDecipher_dreiFragezeichen() {
-	encryptedtext := "CYQ NKAQK8 FKTQK 6HB EHHTQFWTN"
-	cleartext := stdDecipher(StdUppercaseAlphabet, NewKeywordAlphabet("WEISKOPFSEEADLER", StdUppercaseAlphabet), encryptedtext)
-
-	fmt.Println(StdUppercaseAlphabet)
-	fmt.Println(NewKeywordAlphabet("WEISKOPFSEEADLER", StdUppercaseAlphabet))
-	fmt.Println(encryptedtext)
-	fmt.Println(cleartext)
-	// Output:
-	// ABCDEFGHIJKLMNOPQRSTUVWXYZ
-	// WEISKOPFADLRBCGHJMNQTUVXYZ
 	// CYQ NKAQK8 FKTQK 6HB EHHTQFWTN
 	// NYT SEITE8 HEUTE 6PM BPPUTHAUS
 }

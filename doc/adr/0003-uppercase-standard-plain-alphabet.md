@@ -8,7 +8,7 @@ Accepted
 
 ## Context
 
-When dealing with cipher the cipher text is built by mapping characters from the plaintext via the plain alphabet to one or more key alphabets. The ciphertext then consists of characters from the key alphabet. 
+When dealing with cipher the ciphertext is built by mapping characters from the plaintext via the plain alphabet to one or more key alphabets. The ciphertext then consists of characters from the key alphabet.
 
 ## Decision
 

@@ -17,12 +17,12 @@ Example: Shift Rotate the UpperCase Latin Alphabet by N=5 characters left
 Plain Alphabet: ABCDEFGHIJKLMNOPQRSTUVWXYZ
   Key Alphabet: FGHIJKLMNOPQRSTUVWXYZABCDE
 
-A special case for a shift left alphabet is the Caesars ciphers, where N is three.
+A special case for a shift left alphabet is the Caesars ciphers, with N=3.
 
 ## Decision
 
-- Implement a shift/rotate left alghorithm for arbitratry alphabets
-- Implement a shift/rotate right alghorithm for arbitratry alphabets
+- Implement a shift/rotate left algorithm for arbitrary alphabets
+- Implement a shift/rotate right algorithm for arbitrary alphabets
 - Standard alphabet provided is the Latin upper case characters.
 
 ## Consequences
