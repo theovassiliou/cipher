@@ -14,44 +14,56 @@ For the [CLI](adr/0002-use-the-ciphers-via-command-line.md) the following option
 
 ### ciphertool cipher
 
-ciphertool cipher [text]
+Command to cipher a text
+
+    ciphertool cipher [text]
 
 ### ciphertool decipher
 
-cipher decipher [text]
+Command to decipher a text
+
+    ciphertool decipher [text]
 
 ### ciphertool [cipher|decipher] --cipher
 
---cipher option defines which cipher to use. Currently, the following ciphers are supported
+`--cipher`  option defines which cipher to use. Currently, the following ciphers are supported
 
-ciphertool --cipher rotation:n
+    ciphertool --cipher caesar*
+equivalent to `cipher --cipher rotation:3`
+
+    ciphertool --cipher rotation:n
 key alphabet is built by [left rotating](adr/0008-rotation-cipher.md) plain alphabet by n characters
 
-ciphertool --cipher rotation:-n
+    ciphertool --cipher rotation:-n
 key alphabet is built by [right rotating](adr/0008-rotation-cipher.md) plain alphabet by n characters
 
-ciphertool --cipher caesar*
-equivalent to`cipher --cipher rotation:3`
+    ciphertool --cipher reverse
+key alphabet is built by reversing the order of characters of the plain alphabet
 
-ciphertool --cipher reverse
-key alphabet is built by reversing the order of characters of plain alphabet
-
-ciphertool --cipher keyword:WEISSKOPFSEEADLER
+    ciphertool --cipher keyword:WEISSKOPFSEEADLER
 key alphabet is build as WEISKOPFADLRBCGHJMNQTUVXYZ
 
-### ciphertool --plainalphabet --keyalphabet
+### Other options
 
-### ciphertool --raw
+    ciphertool --raw
 
-Plaintext and keywords are not preprocessed, i.e. capitalized.
+Plaintext and keywords are not preprocessed, i.e. not capitalized.
 
-### ciphertool --strip
+## Not yet implemented options
 
-Strip any characters from the plaintext not included in the plain alphabet, before encoding.
+Keeping a backlog of options that we would like to implement.
 
-### ciphertool --group n
+    ciphertool --plainalphabet --keyalphabet
 
-ciphertext is split by a group of n characters. Implies --strip
+To pass hardcoded the `plainalphabet` and the `keyalphabet`. In addition, it should be considered to extend  the standard plain alphabets (and keyalphabets)
+
+    ciphertool --strip
+
+Strip any characters from the plaintext not included in the plain alphabet, before encoding. The default behaviour is that any characters not included in the plain alphabet are just passed.
+
+    ciphertool --group n
+
+ciphertext is split by a group of n characters. Implies `--strip`. Rationale: In order to communicate a ciphertext it might be helpful to pretty-print the output. Implies `--strip` as WS and CR/NL would impact the output.
 
 ## Definitions
 

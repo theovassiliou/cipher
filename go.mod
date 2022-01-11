@@ -3,14 +3,12 @@ module github.com/theovassiliou/cipher
 go 1.17
 
 require (
-	github.com/manifoldco/promptui v0.9.0
 	github.com/spf13/cobra v1.2.1
 	github.com/spf13/viper v1.10.0
 	github.com/theovassiliou/go-exitcodes v0.0.0-20211006165336-dff3dd24f9c9
 )
 
 require (
-	github.com/chzyer/readline v0.0.0-20180603132655-2972be24d48e // indirect
 	github.com/fsnotify/fsnotify v1.5.1 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
