@@ -51,7 +51,7 @@ Plaintext and keywords are not preprocessed, i.e. not capitalized.
 
 ## Not yet implemented options
 
-Keeping a backlog of options that we would like to implement.
+From time to time we are updated ciphertool. For this we are keeping here backlog of options that we would like to implement in the future.
 
     ciphertool --plainalphabet --keyalphabet
 
