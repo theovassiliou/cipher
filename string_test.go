@@ -297,3 +297,26 @@ func TestStripDuplicates_UTF8(t *testing.T) {
 		})
 	}
 }
+
+func BenchmarkRotateString(b *testing.B) {
+	s := "The quick brown fox jumps over the lazy dog."
+	n := 15
+	for i := 0; i < b.N; i++ {
+		_ = RotateUTF8(n, s)
+	}
+}
+
+func BenchmarkRotateStringReverse(b *testing.B) {
+	s := "The quick brown fox jumps over the lazy dog."
+	n := -15
+	for i := 0; i < b.N; i++ {
+		_ = RotateUTF8(n, s)
+	}
+}
+
+func BenchmarkReverseString(b *testing.B) {
+	s := "The quick brown fox jumps over the lazy dog."
+	for i := 0; i < b.N; i++ {
+		_ = ReverseUTF8(s)
+	}
+}

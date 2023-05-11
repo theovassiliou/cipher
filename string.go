@@ -17,23 +17,16 @@ func ReverseUTF8(input string) string {
 // delta 2:  "abcde" --> "cdeab"
 // delta -2: "abcde" --> "deabc"
 func RotateUTF8(delta int, input string) string {
-	if delta == 0 {
-		return input
-	} else if delta > 0 {
-		in := []rune(input)
-		lin := len(in)
-		output := make([]rune, lin)
-
-		for i := delta; i < lin; i++ {
-			output[i-delta] = in[i]
-		}
-		for i := 0; i < delta; i++ {
-			output[lin-delta+i] = in[i]
-		}
-		return string(output)
-	} else {
+	if delta > 0 {
+		r := []rune(input)
+		l := len(r)
+		delta %= l
+		return string(append(r[delta:], r[:delta]...))
+	} else if delta < 0 {
 		runeCount := len([]rune(input))
 		return RotateUTF8(runeCount+delta, input)
+	} else {
+		return input
 	}
 }
 
